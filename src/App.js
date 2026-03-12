@@ -97,6 +97,7 @@ const useStorage = () => {
 
 async function analyzeFood(input, isImage = false) {
   const key = process.env.REACT_APP_GEMINI_API_KEY;
+  if (!key) { throw new Error("No API key found"); }
   const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + key;
   const body = isImage
     ? { contents: [{ parts: [{ inline_data: { mime_type: input.type, data: input.data } }, { text: "Analyse this food. Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } all numbers, no markdown." }] }] }
@@ -107,6 +108,7 @@ async function analyzeFood(input, isImage = false) {
     body: JSON.stringify(body)
   });
   const json = await res.json();
+  console.log("Gemini response:", JSON.stringify(json));
   const text = json.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
   return JSON.parse(text);
 }
