@@ -99,7 +99,7 @@ async function analyzeFood(input, isImage = false) {
   const key = process.env.REACT_APP_GEMINI_API_KEY;
   console.log("API Key loaded:", key ? "Yes (length " + key.length + ")" : "No");
   if (!key) { throw new Error("No API key found in .env"); }
-  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + key;
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + key;
   
   console.log("Fetching exact URL:", url.replace(key, "[HIDDEN]"));
   

@@ -3,12 +3,17 @@
 ## Current Tech Stack
 - Frontend: React (CRA)
 - Styling: Custom Inline CSS / Glassmorphism
-- AI: Google Gemini v1beta (Food Macro Analysis)
+- AI: Google Gemini v1beta (gemini-2.5-flash) (Food Macro Analysis)
 
 ## Summary
 Peanut Progress is a personalized fitness and nutrition tracking dashboard for Ellie and Martin. It uses Gemini AI to reduce the friction of logging meals by analyzing text descriptions and photos.
 
 ## History
+
+### [2026-03-12] Debugging API Connection (Migrate to Gemini 2.5) | [Technical Details](./PROJECT_log-detail.md#log-20260312-gemini-2-5-migration)
+- User upgraded API billing to Tier One.
+- Discovered `gemini-2.0-flash` is restricted for newly-upgraded accounts.
+- Successfully migrated and tested the application using the `gemini-2.5-flash` model.
 
 ### [2026-03-12] Debugging API Connection (Gemini 2.0 Migration) | [Technical Details](./PROJECT_log-detail.md#log-20260312-gemini-2-0-migration)
 - Discovered why the API was still failing (404 errors): `gemini-1.5-flash` was deprecated and removed from the `v1beta` endpoint.

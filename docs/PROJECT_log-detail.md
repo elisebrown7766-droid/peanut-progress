@@ -45,3 +45,14 @@ Forensic Ledger of all task executions.
 
 **Artifacts:**
 *(No implementation plan or walkthrough artifacts created. Discovered that `gemini-1.5-flash` returns 404 because it was removed from `v1beta`. Migrated the codebase to `gemini-2.0-flash`. The API now connects successfully but returns 429 Too Many Requests due to exhausted free-tier quota on the current API key.)*
+
+---
+
+<a name="log-20260312-gemini-2-5-migration"></a>
+### Task: Debugging API Connection (Migrate to Gemini 2.5)
+
+**User Request:**
+> Okay, I've changed it so now I'm in tier one. And my billing details are added.
+
+**Artifacts:**
+*(Tested the upgraded API key but encountered a 404 Not Found error because Google restricts `gemini-2.0-flash` for new upgraded accounts. Migrated the `App.js` API call URL to use `gemini-2.5-flash`. Validated the connection end-to-end; data successfully parses and logs.)*
