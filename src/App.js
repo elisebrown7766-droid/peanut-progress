@@ -97,8 +97,12 @@ const useStorage = () => {
 
 async function analyzeFood(input, isImage = false) {
   const key = process.env.REACT_APP_GEMINI_API_KEY;
-  if (!key) { throw new Error("No API key found"); }
+  console.log("API Key loaded:", key ? "Yes (length " + key.length + ")" : "No");
+  if (!key) { throw new Error("No API key found in .env"); }
   const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + key;
+  
+  console.log("Fetching exact URL:", url.replace(key, "[HIDDEN]"));
+  
   const body = isImage
     ? { contents: [{ parts: [{ inline_data: { mime_type: input.type, data: input.data } }, { text: "Analyse this food. Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } all numbers, no markdown." }] }] }
     : { contents: [{ parts: [{ text: "Analyse this meal: " + input + ". Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } all numbers, no markdown." }] }] };
@@ -107,10 +111,26 @@ async function analyzeFood(input, isImage = false) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error("Gemini API Error:", errText);
+    throw new Error(`API Error ${res.status}: Check your API key or quota.`);
+  }
   const json = await res.json();
   console.log("Gemini response:", JSON.stringify(json));
+  
+  if (!json.candidates || !json.candidates[0] || !json.candidates[0].content || !json.candidates[0].content.parts || !json.candidates[0].content.parts[0]) {
+       console.error("Unexpected Gemini response structure:", json);
+       throw new Error("Received unexpected response format from Gemini.");
+  }
+
   const text = json.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
-  return JSON.parse(text);
+  try {
+     return JSON.parse(text);
+  } catch (e) {
+     console.error("Failed to parse JSON from Gemini:", text);
+     throw new Error("Gemini returned invalid data format.");
+  }
 }
 
 // ─── MacroRing ────────────────────────────────────────────────────────────────
@@ -229,7 +249,7 @@ const FoodModal = ({ onAdd, onClose, color }) => {
 
   const analyse = async () => {
     setLoading(true); setError("");
-    try { setResult(await analyzeFood(text.trim())); } catch { setError("Analysis failed — please try again"); }
+    try { setResult(await analyzeFood(text.trim())); } catch (err) { setError(err.message || "Analysis failed — please try again"); }
     setLoading(false);
   };
 
@@ -238,7 +258,7 @@ const FoodModal = ({ onAdd, onClose, color }) => {
     const reader = new FileReader();
     reader.onload = async ev => {
       setPreview(ev.target.result); setLoading(true); setError("");
-      try { setResult(await analyzeFood({ type: file.type, data: ev.target.result.split(",")[1] }, true)); } catch { setError("Couldn't analyse image"); }
+      try { setResult(await analyzeFood({ type: file.type, data: ev.target.result.split(",")[1] }, true)); } catch (err) { setError(err.message || "Couldn't analyse image"); }
       setLoading(false);
     };
     reader.readAsDataURL(file);
