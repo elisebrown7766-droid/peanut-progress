@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const FONT_LINK = `@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');`;
 
@@ -59,6 +59,20 @@ button { cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
 .fu2 { animation: fadeUp 0.35s 0.12s ease both; }
 .fu3 { animation: fadeUp 0.35s 0.18s ease both; }
 .fu4 { animation: fadeUp 0.35s 0.24s ease both; }
+
+/* Desktop layout */
+@media (min-width: 900px) {
+  .desktop-shell { max-width: 100% !important; }
+  .desktop-header { max-width: 100% !important; padding: 16px 40px 12px !important; }
+  .desktop-header-inner { max-width: 1200px; margin: 0 auto; }
+  .desktop-cols { display: grid !important; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1200px; margin: 0 auto; padding: 20px 40px !important; }
+  .desktop-week { max-width: 900px; margin: 0 auto; padding: 20px 40px !important; }
+  .mobile-user-switcher { display: none !important; }
+  .desktop-col-label { display: block !important; }
+}
+@media (max-width: 899px) {
+  .desktop-col-label { display: none !important; }
+}
 `;
 
 const DEFAULT_GOALS = {
@@ -82,16 +96,21 @@ const useStorage = () => {
 };
 
 async function analyzeFood(input, isImage = false) {
+  const key = process.env.REACT_APP_GEMINI_API_KEY;
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + key;
   const body = isImage
-    ? { contents: [{ parts: [{ inline_data: { mime_type: input.type, data: input.data } }, { text: "Analyse this food. Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } — all numbers." }] }] }
-    : { contents: [{ parts: [{ text: `Analyse: "${input}". Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } — all numbers. No markdown.` }] }] };
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.REACT_APP_GEMINI_API_KEY}`, {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
+    ? { contents: [{ parts: [{ inline_data: { mime_type: input.type, data: input.data } }, { text: "Analyse this food. Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } all numbers, no markdown." }] }] }
+    : { contents: [{ parts: [{ text: "Analyse this meal: " + input + ". Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } all numbers, no markdown." }] }] };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
   });
   const json = await res.json();
-  return JSON.parse(json.candidates[0].content.parts[0].text.replace(/```json|```/g,"").trim());
+  const text = json.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
+  return JSON.parse(text);
 }
-```
+
 // ─── MacroRing ────────────────────────────────────────────────────────────────
 const MacroRing = ({ label, value, goal, color, size = 58 }) => {
   const pct = goal ? Math.min(value / goal, 1) : 0;
@@ -249,7 +268,7 @@ const FoodModal = ({ onAdd, onClose, color }) => {
         <>
           <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleImg} />
           {preview
-            ? <img src={preview} alt="" style={{ width: "100%", borderRadius: 12, marginBottom: 12, maxHeight: 220, objectFit: "cover" }} />
+            ? <img src={preview} style={{ width: "100%", borderRadius: 12, marginBottom: 12, maxHeight: 220, objectFit: "cover" }} />
             : <div onClick={() => fileRef.current.click()} style={{ border: "1px dashed var(--border)", borderRadius: 12, padding: 40, textAlign: "center", cursor: "pointer", color: "var(--text-3)", fontSize: 13, marginBottom: 12 }}>📷 Tap to upload a photo of your plate</div>
           }
           {!preview && !loading && <button onClick={() => fileRef.current.click()} style={btn}>Choose Photo</button>}
@@ -528,67 +547,84 @@ export default function App() {
   return (
     <>
       <style>{FONT_LINK + THEME}</style>
-      <div style={{ maxWidth: 480, margin: "0 auto", minHeight: "100vh", background: "var(--bg)" }}>
+      <div className="desktop-shell" style={{ maxWidth: 480, margin: "0 auto", minHeight: "100vh", background: "var(--bg)" }}>
 
         {/* Sticky header */}
-        <div className="glass-strong" style={{ position: "sticky", top: 0, zIndex: 50, padding: "12px 16px 10px", borderBottom: "1px solid var(--border)" }}>
-          {/* Logo + nav */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <button onClick={() => setDate(addDays(date,-1))} style={{ width: 32, height: 32, borderRadius: 99, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-2)", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>🥜 Peanut Progress</div>
-              <div style={{ fontSize: 11, color: "var(--text-3)", marginTop: 1 }}>
-                {isToday ? "Today" : fmtDate(date)}
-                {!isToday && <span style={{ marginLeft: 6, background: "rgba(255,255,255,0.06)", fontSize: 10, padding: "1px 7px", borderRadius: 99 }}>view only</span>}
+        <div className="glass-strong desktop-header" style={{ position: "sticky", top: 0, zIndex: 50, padding: "12px 16px 10px", borderBottom: "1px solid var(--border)" }}>
+          <div className="desktop-header-inner">
+            {/* Logo + date nav */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <button onClick={() => setDate(addDays(date,-1))} style={{ width: 32, height: 32, borderRadius: 99, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-2)", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>🥜 Peanut Progress</div>
+                <div style={{ fontSize: 11, color: "var(--text-3)", marginTop: 1 }}>
+                  {isToday ? "Today" : fmtDate(date)}
+                  {!isToday && <span style={{ marginLeft: 6, background: "rgba(255,255,255,0.06)", fontSize: 10, padding: "1px 7px", borderRadius: 99 }}>view only</span>}
+                </div>
               </div>
+              <button onClick={() => !isToday && setDate(addDays(date,1))} style={{ width: 32, height: 32, borderRadius: 99, border: "1px solid var(--border)", background: "var(--surface)", color: isToday ? "var(--text-3)" : "var(--text-2)", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
             </div>
-            <button onClick={() => !isToday && setDate(addDays(date,1))} style={{ width: 32, height: 32, borderRadius: 99, border: "1px solid var(--border)", background: "var(--surface)", color: isToday ? "var(--text-3)" : "var(--text-2)", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
-          </div>
 
-          {/* User switcher */}
-          <div style={{ display: "flex", background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 3, gap: 3, marginBottom: 10 }}>
-            {[["ellie","🌸 Ellie"],["martin","🔵 Martin"]].map(([u, label]) => (
-              <button key={u} onClick={() => setUser(u)}
-                style={{ flex: 1, padding: "7px 0", borderRadius: 10, border: "none", fontWeight: 700, fontSize: 13, transition: "all 0.2s",
-                  background: user===u ? (u==="ellie" ? "var(--ellie-dim)" : "var(--martin-dim)") : "transparent",
-                  color: user===u ? (u==="ellie" ? "var(--ellie)" : "var(--martin)") : "var(--text-3)" }}>
-                {label}
-              </button>
-            ))}
-          </div>
+            {/* Mobile user switcher — hidden on desktop */}
+            <div className="mobile-user-switcher" style={{ display: "flex", background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 3, gap: 3, marginBottom: 10 }}>
+              {[["ellie","🌸 Ellie"],["martin","🔵 Martin"]].map(([u, label]) => (
+                <button key={u} onClick={() => setUser(u)}
+                  style={{ flex: 1, padding: "7px 0", borderRadius: 10, border: "none", fontWeight: 700, fontSize: 13, transition: "all 0.2s",
+                    background: user===u ? (u==="ellie" ? "var(--ellie-dim)" : "var(--martin-dim)") : "transparent",
+                    color: user===u ? (u==="ellie" ? "var(--ellie)" : "var(--martin)") : "var(--text-3)" }}>
+                  {label}
+                </button>
+              ))}
+            </div>
 
-          {/* Tabs */}
-          <div style={{ display: "flex", gap: 6 }}>
-            {[["today","Today"],["week","This Week"]].map(([t,label]) => (
-              <button key={t} onClick={() => setTab(t)}
-                style={{ flex: 1, padding: "7px 0", borderRadius: 10, border: "none", fontSize: 13, fontWeight: 600, transition: "all 0.2s",
-                  background: tab===t ? color : "rgba(255,255,255,0.04)",
-                  color: tab===t ? "#fff" : "var(--text-3)" }}>
-                {label}
-              </button>
-            ))}
-            <button onClick={() => setShowGoals(true)} style={{ padding: "7px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "transparent", color: "var(--text-2)", fontSize: 13, fontWeight: 500 }}>Goals</button>
+            {/* Tabs + Goals */}
+            <div style={{ display: "flex", gap: 6 }}>
+              {[["today","Today"],["week","This Week"]].map(([t,label]) => (
+                <button key={t} onClick={() => setTab(t)}
+                  style={{ flex: 1, padding: "7px 0", borderRadius: 10, border: "none", fontSize: 13, fontWeight: 600, transition: "all 0.2s",
+                    background: tab===t ? "var(--ellie)" : "rgba(255,255,255,0.04)",
+                    color: tab===t ? "#fff" : "var(--text-3)" }}>
+                  {label}
+                </button>
+              ))}
+              <button onClick={() => setShowGoals(true)} style={{ padding: "7px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "transparent", color: "var(--text-2)", fontSize: 13, fontWeight: 500 }}>Goals</button>
+            </div>
           </div>
         </div>
 
         {/* Page content */}
-        <div style={{ padding: 14 }}>
-          {tab === "today" ? (
-            <>
-              <Dashboard user={user} date={date} storage={storage} readOnly={!isToday} />
-              <div style={{ margin: "20px 0 10px", display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
-                <span style={{ fontSize: 10, color: "var(--text-3)", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                  {partner === "ellie" ? "Ellie" : "Martin"}'s day
-                </span>
-                <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+        {tab === "today" ? (
+          <div className="desktop-cols" style={{ padding: 14 }}>
+            {/* Ellie column */}
+            <div>
+              <div className="desktop-col-label" style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: "var(--ellie)", marginBottom: 12, letterSpacing: "0.04em" }}>🌸 ELLIE</div>
+              <Dashboard user="ellie" date={date} storage={storage} readOnly={!isToday} />
+            </div>
+            {/* Martin column */}
+            <div>
+              <div className="desktop-col-label" style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: "var(--martin)", marginBottom: 12, letterSpacing: "0.04em" }}>🔵 MARTIN</div>
+              <Dashboard user="martin" date={date} storage={storage} readOnly={!isToday} />
+            </div>
+          </div>
+        ) : (
+          <div className="desktop-week" style={{ padding: 14 }}>
+            {/* Mobile: show active user. Desktop: show both side by side */}
+            <div className="desktop-cols" style={{ padding: 0 }}>
+              <div>
+                <div className="desktop-col-label" style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: "var(--ellie)", marginBottom: 12 }}>🌸 ELLIE</div>
+                <WeeklyView user="ellie" storage={storage} />
               </div>
-              <Dashboard user={partner} date={date} storage={storage} readOnly={true} compact={true} />
-            </>
-          ) : (
-            <WeeklyView user={user} storage={storage} />
-          )}
-        </div>
+              <div>
+                <div className="desktop-col-label" style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: "var(--martin)", marginBottom: 12 }}>🔵 MARTIN</div>
+                <WeeklyView user="martin" storage={storage} />
+              </div>
+            </div>
+            {/* Mobile fallback */}
+            <div className="mobile-user-switcher" style={{ display: "block" }}>
+              <WeeklyView user={user} storage={storage} />
+            </div>
+          </div>
+        )}
 
         {showGoals && <GoalsModal goals={storage.getGoals(user)} user={user} onSave={g => storage.setGoals(user, g)} onClose={() => setShowGoals(false)} />}
       </div>
