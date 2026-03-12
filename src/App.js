@@ -98,7 +98,7 @@ const useStorage = () => {
 async function analyzeFood(input, isImage = false) {
   const key = process.env.REACT_APP_GEMINI_API_KEY;
   if (!key) { throw new Error("No API key found"); }
-  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + key;
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + key;
   const body = isImage
     ? { contents: [{ parts: [{ inline_data: { mime_type: input.type, data: input.data } }, { text: "Analyse this food. Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } all numbers, no markdown." }] }] }
     : { contents: [{ parts: [{ text: "Analyse this meal: " + input + ". Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } all numbers, no markdown." }] }] };
