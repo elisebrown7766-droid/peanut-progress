@@ -91,6 +91,7 @@ async function analyzeFood(input, isImage = false) {
   const json = await res.json();
   return JSON.parse(json.candidates[0].content.parts[0].text.replace(/```json|```/g,"").trim());
 }
+```
 // ─── MacroRing ────────────────────────────────────────────────────────────────
 const MacroRing = ({ label, value, goal, color, size = 58 }) => {
   const pct = goal ? Math.min(value / goal, 1) : 0;
