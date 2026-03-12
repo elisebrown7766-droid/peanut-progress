@@ -1,64 +1,80 @@
 import { useState, useRef } from "react";
 
-const FONT_LINK = `@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');`;
+const FONT_LINK = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');`;
 
 const THEME = `
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background: #0a0a0b;
-  color: #f0ede8;
+  font-family: 'Inter', sans-serif;
+  background: #faf9f8;
+  color: #1a1a1a;
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 :root {
-  --bg: #0a0a0b;
-  --bg2: #111114;
-  --bg3: #18181d;
-  --surface: rgba(255,255,255,0.04);
-  --surface-hover: rgba(255,255,255,0.07);
-  --border: rgba(255,255,255,0.08);
-  --border-strong: rgba(255,255,255,0.14);
-  --text: #f0ede8;
-  --text-2: #9b9693;
-  --text-3: #5a5754;
-  --ellie: #f0826c;
-  --ellie-dim: rgba(240,130,108,0.15);
-  --ellie-glow: rgba(240,130,108,0.25);
-  --martin: #6ca8f0;
-  --martin-dim: rgba(108,168,240,0.15);
-  --martin-glow: rgba(108,168,240,0.25);
-  --radius: 16px;
+  --bg: #faf9f8;
+  --bg2: #ffffff;
+  --bg3: #f0eeec;
+  --surface: #ffffff;
+  --surface-hover: #f9f9f9;
+  --border: #eaeaea;
+  --border-strong: #d0d0d0;
+  --text: #1a1a1a;
+  --text-2: #6b6b6b;
+  --text-3: #9e9e9e;
+  --ellie: #d4a398;
+  --ellie-dim: rgba(212,163,152,0.12);
+  --ellie-glow: rgba(212,163,152,0.25);
+  --martin: #8ba3ab;
+  --martin-dim: rgba(139,163,171,0.12);
+  --martin-glow: rgba(139,163,171,0.25);
+  --radius: 12px;
 }
 input, textarea, select {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
 }
-button { cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
-::-webkit-scrollbar { width: 3px; }
+button { 
+  cursor: pointer; 
+  font-family: 'Inter', sans-serif; 
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+button:active {
+  transform: scale(0.97);
+}
+::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 4px; }
+
+/* Subtle interactions replace glassmorphism */
 .glass {
-  background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: #ffffff;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.06);
 }
 .glass-strong {
-  background: rgba(14,14,16,0.85);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
 }
+
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.fu0 { animation: fadeUp 0.35s ease both; }
-.fu1 { animation: fadeUp 0.35s 0.06s ease both; }
-.fu2 { animation: fadeUp 0.35s 0.12s ease both; }
-.fu3 { animation: fadeUp 0.35s 0.18s ease both; }
-.fu4 { animation: fadeUp 0.35s 0.24s ease both; }
+.fu0 { animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fu1 { animation: fadeUp 0.5s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fu2 { animation: fadeUp 0.5s 0.16s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fu3 { animation: fadeUp 0.5s 0.24s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.fu4 { animation: fadeUp 0.5s 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 /* Desktop layout */
 @media (min-width: 900px) {
@@ -142,8 +158,8 @@ const MacroRing = ({ label, value, goal, color, size = 58 }) => {
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
       <div style={{ position: "relative", width: size, height: size }}>
         <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
-          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4.5" />
-          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth="4.5"
+          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--border)" strokeWidth="3.5" />
+          <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth="3.5"
             strokeDasharray={`${pct * circ} ${circ}`} strokeLinecap="round"
             style={{ transition: "stroke-dasharray 0.7s cubic-bezier(0.4,0,0.2,1)" }} />
         </svg>
@@ -164,8 +180,8 @@ const Bar = ({ label, value, goal, color, unit = "g" }) => (
       <span style={{ color: "var(--text-2)" }}>{label}</span>
       <span style={{ color: "var(--text)", fontWeight: 600 }}>{Math.round(value)}<span style={{ color: "var(--text-3)", fontWeight: 400 }}>/{goal}{unit}</span></span>
     </div>
-    <div style={{ height: 4, background: "rgba(255,255,255,0.07)", borderRadius: 2, overflow: "hidden" }}>
-      <div style={{ width: `${Math.min((value/goal)*100,100)}%`, height: "100%", background: `linear-gradient(90deg, ${color}88, ${color})`, borderRadius: 2, transition: "width 0.6s cubic-bezier(0.4,0,0.2,1)" }} />
+    <div style={{ height: 4, background: "var(--border)", borderRadius: 2, overflow: "hidden" }}>
+      <div style={{ width: `${Math.min((value/goal)*100,100)}%`, height: "100%", background: `${color}`, borderRadius: 2, transition: "width 0.8s cubic-bezier(0.16,1,0.3,1)" }} />
     </div>
   </div>
 );
@@ -229,7 +245,7 @@ const Modal = ({ title, color, onClose, children }) => (
   <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 200, display: "flex", alignItems: "flex-end", justifyContent: "center", backdropFilter: "blur(6px)" }}>
     <div className="glass-strong fu0" style={{ borderRadius: "24px 24px 0 0", padding: 24, width: "100%", maxWidth: 480, maxHeight: "92vh", overflowY: "auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-        <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 22, fontWeight: 800, color }}>{title}</span>
+        <span style={{ fontSize: 20, fontWeight: 700, color, letterSpacing: "-0.01em" }}>{title}</span>
         <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 99, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-2)", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}>✕</button>
       </div>
       {children}
@@ -269,11 +285,11 @@ const FoodModal = ({ onAdd, onClose, color }) => {
 
   return (
     <Modal title="Log a Meal" color={color} onClose={onClose}>
-      <div style={{ display: "flex", background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 3, gap: 3, marginBottom: 18 }}>
+      <div style={{ display: "flex", background: "var(--bg3)", borderRadius: 12, padding: 3, gap: 3, marginBottom: 18 }}>
         {["text","photo"].map(m => (
           <button key={m} onClick={() => { setMode(m); setResult(null); setPreview(null); }}
-            style={{ flex: 1, padding: "7px", borderRadius: 9, border: "none", background: mode===m ? color : "transparent", color: mode===m ? "#fff" : "var(--text-2)", fontWeight: 600, fontSize: 13, transition: "all 0.2s" }}>
-            {m === "text" ? "✏️ Describe" : "📷 Photo"}
+            style={{ flex: 1, padding: "7px", borderRadius: 9, border: "none", background: mode===m ? "#fff" : "transparent", color: mode===m ? "var(--text)" : "var(--text-2)", fontWeight: 600, fontSize: 13, boxShadow: mode===m ? "0 2px 8px rgba(0,0,0,0.04)" : "none", transition: "all 0.2s" }}>
+            {m === "text" ? "Describe" : "Photo"}
           </button>
         ))}
       </div>
@@ -291,7 +307,7 @@ const FoodModal = ({ onAdd, onClose, color }) => {
           <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleImg} />
           {preview
             ? <img src={preview} alt="" style={{ width: "100%", borderRadius: 12, marginBottom: 12, maxHeight: 220, objectFit: "cover" }} />
-            : <div onClick={() => fileRef.current.click()} style={{ border: "1px dashed var(--border)", borderRadius: 12, padding: 40, textAlign: "center", cursor: "pointer", color: "var(--text-3)", fontSize: 13, marginBottom: 12 }}>📷 Tap to upload a photo of your plate</div>
+            : <div onClick={() => fileRef.current.click()} style={{ border: "1px dashed var(--border-strong)", borderRadius: 12, padding: 40, textAlign: "center", cursor: "pointer", color: "var(--text-3)", fontSize: 13, marginBottom: 12, background: "var(--bg)" }}>Tap to upload a photo of your plate</div>
           }
           {!preview && !loading && <button onClick={() => fileRef.current.click()} style={btn}>Choose Photo</button>}
           {loading && <div style={{ textAlign: "center", color: "var(--text-2)", fontSize: 13, padding: 12 }}>Analysing…</div>}
@@ -300,11 +316,11 @@ const FoodModal = ({ onAdd, onClose, color }) => {
       {error && <div style={{ color: "#f08a6c", fontSize: 13, marginTop: 8 }}>{error}</div>}
       {result && (
         <div className="fu0">
-          <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, color, marginBottom: 16 }}>{result.mealName}</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color, marginBottom: 16 }}>{result.mealName}</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 18 }}>
             {[["Calories",result.calories,"kcal"],["Protein",result.protein,"g"],["Carbs",result.carbs,"g"],["Fat",result.fat,"g"],["Fiber",result.fiber,"g"],["Sugar",result.sugar,"g"]].map(([l,v,u]) => (
-              <div key={l} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "12px 8px", textAlign: "center", border: "1px solid var(--border)" }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color }}>{Math.round(v)}<span style={{ fontSize: 10, fontWeight: 400, color: "var(--text-3)" }}>{u}</span></div>
+              <div key={l} style={{ background: "var(--bg)", borderRadius: 12, padding: "12px 8px", textAlign: "center", border: "1px solid var(--border)" }}>
+                <div style={{ fontSize: 20, fontWeight: 600, color }}>{Math.round(v)}<span style={{ fontSize: 10, fontWeight: 400, color: "var(--text-3)" }}>{u}</span></div>
                 <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 2 }}>{l}</div>
               </div>
             ))}
@@ -327,7 +343,7 @@ const WorkoutModal = ({ onAdd, onClose, color }) => {
   return (
     <Modal title="Log Workout" color={color} onClose={onClose}>
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        <div><div style={lbl}>Exercise</div><select value={type} onChange={e => setType(e.target.value)} style={inp}>{EXERCISES.map(e => <option key={e} style={{ background: "#18181d" }}>{e}</option>)}</select></div>
+        <div><div style={lbl}>Exercise</div><select value={type} onChange={e => setType(e.target.value)} style={inp}>{EXERCISES.map(e => <option key={e} value={e}>{e}</option>)}</select></div>
         <div style={{ display: "flex", gap: 10 }}>
           <div style={{ flex: 1 }}><div style={lbl}>Minutes</div><input type="number" value={duration} onChange={e => setDuration(e.target.value)} placeholder="30" style={inp} /></div>
           <div style={{ flex: 1 }}><div style={lbl}>Cals burned</div><input type="number" value={calories} onChange={e => setCalories(e.target.value)} placeholder="200" style={inp} /></div>
@@ -389,14 +405,14 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
   if (compact) return (
     <div className="glass" style={{ borderRadius: "var(--radius)", padding: 16, border: `1px solid ${color}22` }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-        <span style={{ fontFamily: "'Syne',sans-serif", fontSize: 15, fontWeight: 800, color }}>{user === "ellie" ? "🌸 Ellie" : "🔵 Martin"}</span>
-        {day.weight && <span style={{ fontSize: 12, color, background: `${color}18`, padding: "3px 10px", borderRadius: 99, fontWeight: 600 }}>{day.weight} kg</span>}
+        <span style={{ fontSize: 16, fontWeight: 700, color, letterSpacing: "-0.01em" }}>{user === "ellie" ? "Ellie" : "Martin"}</span>
+        {day.weight && <span style={{ fontSize: 12, color, background: "var(--surface)", border: `1px solid ${color}33`, padding: "3px 10px", borderRadius: 99, fontWeight: 600 }}>{day.weight} kg</span>}
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
         <Bar label="Calories" value={totals.calories} goal={goals.calories} color={color} unit="kcal" />
         <Bar label="Protein" value={totals.protein} goal={goals.protein} color={color} />
       </div>
-      <div style={{ fontSize: 12, color: "var(--text-2)", marginBottom: day.meals.length ? 6 : 0 }}>💧 {day.water} / {goals.water} glasses</div>
+      <div style={{ fontSize: 12, color: "var(--text-2)", marginBottom: day.meals.length ? 6 : 0 }}>{day.water} / {goals.water} glasses</div>
       {day.meals.length > 0 && <div style={{ fontSize: 12, color: "var(--text-3)" }}>{day.meals.map(m => m.mealName).join(" · ")}</div>}
     </div>
   );
@@ -405,14 +421,14 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
       {/* Hero calorie card */}
-      <div className="glass fu0" style={{ borderRadius: "var(--radius)", padding: 20, background: `radial-gradient(ellipse at top right, ${glow}25, transparent 65%), rgba(255,255,255,0.03)`, border: `1px solid ${color}20` }}>
+      <div className="glass fu0" style={{ borderRadius: "var(--radius)", padding: 20, background: "var(--surface)", border: `1px solid ${color}20` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 20 }}>
           <div style={{ position: "relative", flexShrink: 0 }}>
             <svg width={88} height={88} style={{ transform: "rotate(-90deg)" }}>
-              <circle cx={44} cy={44} r={36} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
-              <circle cx={44} cy={44} r={36} fill="none" stroke={color} strokeWidth="6"
+              <circle cx={44} cy={44} r={36} fill="none" stroke="var(--border)" strokeWidth="5" />
+              <circle cx={44} cy={44} r={36} fill="none" stroke={color} strokeWidth="5"
                 strokeDasharray={`${Math.min(totals.calories/goals.calories,1)*2*Math.PI*36} ${2*Math.PI*36}`}
-                strokeLinecap="round" style={{ transition: "stroke-dasharray 0.8s cubic-bezier(0.4,0,0.2,1)", filter: `drop-shadow(0 0 8px ${color})` }} />
+                strokeLinecap="round" style={{ transition: "stroke-dasharray 0.8s cubic-bezier(0.16,1,0.3,1)" }} />
             </svg>
             <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
               <span style={{ fontSize: 18, fontWeight: 800, color, lineHeight: 1 }}>{Math.round(totals.calories)}</span>
@@ -420,10 +436,10 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
             </div>
           </div>
           <div>
-            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 14, fontWeight: 800, color, marginBottom: 3 }}>{user === "ellie" ? "Ellie" : "Martin"}</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: "var(--text)", lineHeight: 1 }}>{Math.round(totals.calories)}<span style={{ fontSize: 13, fontWeight: 400, color: "var(--text-3)" }}>/{goals.calories} kcal</span></div>
+            <div style={{ fontSize: 16, fontWeight: 700, color, marginBottom: 3, letterSpacing: "-0.01em" }}>{user === "ellie" ? "Ellie" : "Martin"}</div>
+            <div style={{ fontSize: 24, fontWeight: 700, color: "var(--text)", lineHeight: 1 }}>{Math.round(totals.calories)}<span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-3)" }}>/{goals.calories} kcal</span></div>
             <div style={{ fontSize: 12, color: "var(--text-3)", marginTop: 4 }}>
-              {goals.calories - Math.round(totals.calories) > 0 ? `${goals.calories - Math.round(totals.calories)} kcal remaining` : "🎉 Goal reached!"}
+              {goals.calories - Math.round(totals.calories) > 0 ? `${goals.calories - Math.round(totals.calories)} kcal remaining` : "Goal reached!"}
             </div>
           </div>
         </div>
@@ -455,8 +471,8 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
       {/* Water + Weight */}
       <div className="fu2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <div className="glass" style={{ borderRadius: "var(--radius)", padding: 16 }}>
-          {lbl("💧 Water")}
-          <div style={{ fontSize: 26, fontWeight: 800, color: "var(--martin)", lineHeight: 1, marginBottom: 10 }}>
+          {lbl("Water")}
+          <div style={{ fontSize: 28, fontWeight: 700, color: "var(--martin)", lineHeight: 1, marginBottom: 10 }}>
             {day.water}<span style={{ fontSize: 13, fontWeight: 400, color: "var(--text-3)" }}>/{goals.water}</span>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: readOnly ? 0 : 10 }}>
@@ -476,10 +492,10 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
         </div>
 
         <div className="glass" style={{ borderRadius: "var(--radius)", padding: 16 }}>
-          {lbl("⚖️ Weight")}
+          {lbl("Weight")}
           {day.weight ? (
             <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-              <span style={{ fontSize: 28, fontWeight: 800, color }}>{day.weight}</span>
+              <span style={{ fontSize: 28, fontWeight: 700, color }}>{day.weight}</span>
               <span style={{ fontSize: 13, color: "var(--text-3)" }}>kg</span>
               {!readOnly && <button onClick={() => setDay(user, date, { ...day, weight: null })} style={{ marginLeft: "auto", background: "none", border: "none", color: "var(--text-3)", fontSize: 12 }}>edit</button>}
             </div>
@@ -497,7 +513,7 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
       {/* Workouts */}
       <div className="glass fu3" style={{ borderRadius: "var(--radius)", padding: 16 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          {lbl("🏃 Workouts")}
+          {lbl("Workouts")}
           {!readOnly && <button onClick={() => setShowWorkout(true)} style={{ padding: "5px 14px", borderRadius: 99, border: `1px solid ${color}`, background: `${color}18`, color, fontSize: 12, fontWeight: 700 }}>+ Add</button>}
         </div>
         {day.workouts.length === 0
@@ -577,18 +593,18 @@ export default function App() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
               <button onClick={() => setDate(addDays(date,-1))} style={{ width: 32, height: 32, borderRadius: 99, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-2)", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 20, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--text)" }}>🥜 Peanut Progress</div>
-                <div style={{ fontSize: 11, color: "var(--text-3)", marginTop: 1 }}>
+                <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text)" }}>Peanut Progress</div>
+                <div style={{ fontSize: 11, color: "var(--text-3)", marginTop: 2, fontWeight: 500 }}>
                   {isToday ? "Today" : fmtDate(date)}
-                  {!isToday && <span style={{ marginLeft: 6, background: "rgba(255,255,255,0.06)", fontSize: 10, padding: "1px 7px", borderRadius: 99 }}>view only</span>}
+                  {!isToday && <span style={{ marginLeft: 6, background: "var(--bg3)", color: "var(--text-2)", fontSize: 10, padding: "2px 8px", borderRadius: 99 }}>view only</span>}
                 </div>
               </div>
               <button onClick={() => !isToday && setDate(addDays(date,1))} style={{ width: 32, height: 32, borderRadius: 99, border: "1px solid var(--border)", background: "var(--surface)", color: isToday ? "var(--text-3)" : "var(--text-2)", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>›</button>
             </div>
 
             {/* Mobile user switcher — hidden on desktop */}
-            <div className="mobile-user-switcher" style={{ display: "flex", background: "rgba(255,255,255,0.04)", borderRadius: 12, padding: 3, gap: 3, marginBottom: 10 }}>
-              {[["ellie","🌸 Ellie"],["martin","🔵 Martin"]].map(([u, label]) => (
+            <div className="mobile-user-switcher" style={{ display: "flex", background: "var(--bg3)", borderRadius: 12, padding: 3, gap: 3, marginBottom: 10 }}>
+              {[["ellie","Ellie"],["martin","Martin"]].map(([u, label]) => (
                 <button key={u} onClick={() => setUser(u)}
                   style={{ flex: 1, padding: "7px 0", borderRadius: 10, border: "none", fontWeight: 700, fontSize: 13, transition: "all 0.2s",
                     background: user===u ? (u==="ellie" ? "var(--ellie-dim)" : "var(--martin-dim)") : "transparent",
@@ -603,12 +619,12 @@ export default function App() {
               {[["today","Today"],["week","This Week"]].map(([t,label]) => (
                 <button key={t} onClick={() => setTab(t)}
                   style={{ flex: 1, padding: "7px 0", borderRadius: 10, border: "none", fontSize: 13, fontWeight: 600, transition: "all 0.2s",
-                    background: tab===t ? "var(--ellie)" : "rgba(255,255,255,0.04)",
-                    color: tab===t ? "#fff" : "var(--text-3)" }}>
+                    background: tab===t ? "var(--text)" : "var(--bg3)",
+                    color: tab===t ? "#fff" : "var(--text-2)", boxShadow: tab===t ? "0 2px 10px rgba(0,0,0,0.08)" : "none" }}>
                   {label}
                 </button>
               ))}
-              <button onClick={() => setShowGoals(true)} style={{ padding: "7px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "transparent", color: "var(--text-2)", fontSize: 13, fontWeight: 500 }}>Goals</button>
+              <button onClick={() => setShowGoals(true)} style={{ padding: "7px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text)", fontSize: 13, fontWeight: 500 }}>Goals</button>
             </div>
           </div>
         </div>
@@ -618,12 +634,12 @@ export default function App() {
           <div className="desktop-cols" style={{ padding: 14 }}>
             {/* Ellie column */}
             <div>
-              <div className="desktop-col-label" style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: "var(--ellie)", marginBottom: 12, letterSpacing: "0.04em" }}>🌸 ELLIE</div>
+              <div className="desktop-col-label" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-2)", marginBottom: 12, letterSpacing: "0.05em", textTransform: "uppercase" }}>Ellie</div>
               <Dashboard user="ellie" date={date} storage={storage} readOnly={!isToday} />
             </div>
             {/* Martin column */}
             <div>
-              <div className="desktop-col-label" style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: "var(--martin)", marginBottom: 12, letterSpacing: "0.04em" }}>🔵 MARTIN</div>
+              <div className="desktop-col-label" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-2)", marginBottom: 12, letterSpacing: "0.05em", textTransform: "uppercase" }}>Martin</div>
               <Dashboard user="martin" date={date} storage={storage} readOnly={!isToday} />
             </div>
           </div>
@@ -632,11 +648,11 @@ export default function App() {
             {/* Mobile: show active user. Desktop: show both side by side */}
             <div className="desktop-cols" style={{ padding: 0 }}>
               <div>
-                <div className="desktop-col-label" style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: "var(--ellie)", marginBottom: 12 }}>🌸 ELLIE</div>
+                <div className="desktop-col-label" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-2)", marginBottom: 12, letterSpacing: "0.05em", textTransform: "uppercase" }}>Ellie</div>
                 <WeeklyView user="ellie" storage={storage} />
               </div>
               <div>
-                <div className="desktop-col-label" style={{ fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 800, color: "var(--martin)", marginBottom: 12 }}>🔵 MARTIN</div>
+                <div className="desktop-col-label" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-2)", marginBottom: 12, letterSpacing: "0.05em", textTransform: "uppercase" }}>Martin</div>
                 <WeeklyView user="martin" storage={storage} />
               </div>
             </div>

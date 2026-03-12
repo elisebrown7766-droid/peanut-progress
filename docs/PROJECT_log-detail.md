@@ -56,3 +56,75 @@ Forensic Ledger of all task executions.
 
 **Artifacts:**
 *(Tested the upgraded API key but encountered a 404 Not Found error because Google restricts `gemini-2.0-flash` for new upgraded accounts. Migrated the `App.js` API call URL to use `gemini-2.5-flash`. Validated the connection end-to-end; data successfully parses and logs.)*
+
+---
+
+<a name="log-20260312-chic-redesign"></a>
+### Task: UI Redesign (Minimalist Chic)
+
+**User Request:**
+> Okay, it's definitely working now, that's amazing. Now I want to work on the UI. I don't like the way it looks, I want it to look more professional and chic.
+> [Clarification]: I think the light version, but I want it to look like those modern brands that are very minimal elegant and modern, but the font needs to be clean and not over-the-top. And definitely no emoji-like little symbols. I think that looks really tacky. 
+
+**Artifacts:**
+```markdown
+# UI Redesign: Chic & Professional
+
+This plan outlines the design system overhaul to take Peanut Progress from a neon glassmorphic aesthetic to a highly refined, chic, and professional dashboard.
+
+## User Review Required
+> [!IMPORTANT]
+> The Light Theme has been approved! The design will focus on extreme minimalism, avoiding anything "tacky."
+
+## Proposed Changes
+
+### 1. Typography Overhaul (Clean & Modern)
+- **Primary Font:** We will use `Inter` (or a similarly high-end, clean sans-serif) globally for a modern, understated look. No overly flourished serifs based on your feedback.
+- **Data & UI Text:** Clean capitalization, wide tracking for labels, and strict typographic hierarchy to replace the need for icons.
+- **Emoji Removal:** All emojis (`🌸`, `🔵`, `✏️`, `📷`, `💧`, `⚖️`, `🏃`) will be completely stripped from the application to maintain a high-end, serious aesthetic.
+
+### 2. Color Palette (Sophisticated Light Minimalism)
+- **Backgrounds:** Soft alabaster/off-white (`#faf9f8` or `#ffffff`) with deep charcoal text (`#1a1a1a`).
+- **Accents:** Muted, elegant tones that feel intentional, not bright:
+  - **Ellie:** Dusty Rose / Soft Terracotta (`#d4a398`)
+  - **Martin:** Slate Blue / Sage Green (`#8ba3ab`)
+
+### 3. Component Styling
+- **Removal of All Emojis & Glassmorphism:** Drop the blurs, thick borders, and heavy backgrounds.
+- **Cards & Containers:** Stark, clean borders (1px solid `#eaeaea`) with flat, white backgrounds and sharp or slightly rounded corners. No heavy drop shadows.
+- **Charts & Rings:** Make stroke widths thinner and more delicate.
+- **Buttons:** Solid, flat buttons with subtle hover states (slight opacity change or slight lift) rather than glowing effects.
+
+### 4. Layout & Whitespace
+- Increase margin and padding across the board to let the data "breathe."
+- Align elements strictly to a grid system for a structured, editorial feel.
+
+## Verification Plan
+
+### Manual Verification
+1. I will implement the base CSS variables and typography changes.
+2. I will apply the new styling to the main `Dashboard` cards and Modals.
+3. I will provide a screenshot of the new UI using the browser subagent.
+4. You will review the visual changes to ensure they hit the "chic and professional" mark before we finalize everything.
+```
+
+```markdown
+# Walkthrough: Chic Clean Architecture Redesign
+
+The UI overhaul of Peanut Progress has been completed! All requested changes from the implementation plan have been strictly followed. 
+
+### Changes Made
+- **Typography Swap**: Removed `Plus Jakarta Sans` and `Syne` in favor of a universal implementation of the `Inter` font.
+- **Emoji Eradication**: Cleaned up the codebase to completely purge all emojis. The dashboard relies strictly on typographic hierarchy and spacing.
+- **Color Way Update**: Replaced `var(--bg)` and elements with a crisp, alabaster white base and introduced muted, sophisticated accents (Dusty Rose for Ellie, Sage Green for Martin).
+- **Styling**: Removed glassmorphism gradients and blurs. Cards now feature flat white surfaces with a pristine 1px `#eaeaea` border and a highly diffused micro-animation shadow on hover.
+
+### Validation Results
+I ran a browser subagent and confirmed visually that the layout conforms to the new aesthetic direction. The live website is completely devoid of the previous "neon gamer" look.
+
+![Live Weekly View Snapshot](C:\Users\elise\.gemini\antigravity\brain\7e5ef44a-03dc-47e9-af88-c720ce6383d5\.system_generated\click_feedback\click_feedback_1773353267221.png)
+
+### Video Recording of UI Interactions
+Check out the video demonstrating the subtle button fill animations and the flat minimalist modal screens:
+![Interaction Recording](C:\Users\elise\.gemini\antigravity\brain\7e5ef44a-03dc-47e9-af88-c720ce6383d5\chic_redesign_preview_1773353203171.webp)
+```
