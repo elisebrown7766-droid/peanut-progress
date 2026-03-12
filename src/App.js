@@ -82,21 +82,15 @@ const useStorage = () => {
 };
 
 async function analyzeFood(input, isImage = false) {
-  const content = isImage
-    ? [
-        { type: "image", source: { type: "base64", media_type: input.type, data: input.data } },
-        { type: "text", text: "Analyse the food in this image. Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } — all numbers (kcal/g). No extra text." }
-      ]
-    : `Analyse: "${input}". Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } — all numbers. No markdown.`;
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 400, messages: [{ role: "user", content }] })
+  const body = isImage
+    ? { contents: [{ parts: [{ inline_data: { mime_type: input.type, data: input.data } }, { text: "Analyse this food. Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } — all numbers." }] }] }
+    : { contents: [{ parts: [{ text: `Analyse: "${input}". Return ONLY JSON: { mealName, calories, protein, carbs, fat, fiber, sugar } — all numbers. No markdown.` }] }] };
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.REACT_APP_GEMINI_API_KEY}`, {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
   });
   const json = await res.json();
-  return JSON.parse(json.content.map(b => b.text || "").join("").replace(/```json|```/g, "").trim());
+  return JSON.parse(json.candidates[0].content.parts[0].text.replace(/```json|```/g,"").trim());
 }
-
 // ─── MacroRing ────────────────────────────────────────────────────────────────
 const MacroRing = ({ label, value, goal, color, size = 58 }) => {
   const pct = goal ? Math.min(value / goal, 1) : 0;
