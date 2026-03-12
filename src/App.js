@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 
 const FONT_LINK = `@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');`;
 
@@ -254,7 +254,7 @@ const FoodModal = ({ onAdd, onClose, color }) => {
         <>
           <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleImg} />
           {preview
-            ? <img src={preview} style={{ width: "100%", borderRadius: 12, marginBottom: 12, maxHeight: 220, objectFit: "cover" }} />
+            ? <img src={preview} alt="" style={{ width: "100%", borderRadius: 12, marginBottom: 12, maxHeight: 220, objectFit: "cover" }} />
             : <div onClick={() => fileRef.current.click()} style={{ border: "1px dashed var(--border)", borderRadius: 12, padding: 40, textAlign: "center", cursor: "pointer", color: "var(--text-3)", fontSize: 13, marginBottom: 12 }}>📷 Tap to upload a photo of your plate</div>
           }
           {!preview && !loading && <button onClick={() => fileRef.current.click()} style={btn}>Choose Photo</button>}
