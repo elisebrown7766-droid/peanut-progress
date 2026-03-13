@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 const FONT_LINK = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');`;
 
@@ -69,6 +69,11 @@ button:active {
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
 }
 .fu0 { animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .fu1 { animation: fadeUp 0.5s 0.08s cubic-bezier(0.16, 1, 0.3, 1) both; }
@@ -253,6 +258,104 @@ const Modal = ({ title, color, onClose, children }) => (
   </div>
 );
 
+// ─── VoiceInput ───────────────────────────────────────────────────────────────
+const VoiceInput = ({ onTranscription, color }) => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [liveText, setLiveText] = useState("");
+  const [supported, setSupported] = useState(true);
+  
+  const recognitionRef = useRef(null);
+  const finalTextRef = useRef("");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI) setSupported(false);
+  }, []);
+
+  const startRecording = useCallback(() => {
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI) {
+      alert("Voice input requires Safari (iPhone) or Chrome (Android).");
+      return;
+    }
+
+    finalTextRef.current = "";
+    const recognition = new SpeechRecognitionAPI();
+    recognition.lang = "en-US"; 
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    recognition.continuous = false;
+
+    recognition.onstart = () => {
+      setIsRecording(true);
+      setLiveText("");
+    };
+
+    recognition.onresult = (event) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTextRef.current += t;
+        } else {
+          interim += t;
+        }
+      }
+      setLiveText(interim || finalTextRef.current);
+    };
+
+    recognition.onend = () => {
+      setIsRecording(false);
+      const transcript = finalTextRef.current || liveText;
+      if (transcript.trim()) {
+        onTranscription(transcript.trim());
+      }
+      setLiveText("");
+    };
+
+    recognition.onerror = (event) => {
+      setIsRecording(false);
+      if (event.error !== "no-speech") {
+        console.error("Voice error:", event.error);
+      }
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+  }, [liveText, onTranscription]);
+
+  const stopRecording = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+  }, []);
+
+  if (!supported) return null;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 12 }}>
+      <button type="button" onClick={isRecording ? stopRecording : startRecording}
+        style={{
+          width: "100%", padding: 13, borderRadius: 12, border: "1px solid var(--border)",
+          background: isRecording ? "rgba(255,100,100,0.06)" : "rgba(255,255,255,0.04)",
+          color: isRecording ? "#d94b4b" : "var(--text-2)",
+          fontWeight: 600, fontSize: 14, display: "flex", justifyContent: "center", alignItems: "center", gap: 8,
+          transition: "all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1)"
+        }}>
+        <div style={{ width: 8, height: 8, borderRadius: 4, background: isRecording ? "#d94b4b" : "var(--text-3)", animation: isRecording ? "pulse 1.5s infinite" : "none" }} />
+        {isRecording ? "Listening... tap to stop" : "Tap to dictate"}
+      </button>
+      
+      {liveText && (
+        <div style={{ padding: 12, background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, fontSize: 13, color: "var(--text)", fontStyle: "italic", textAlign: "center" }}>
+          "{liveText}"
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ─── FoodModal ────────────────────────────────────────────────────────────────
 const FoodModal = ({ onAdd, onClose, color }) => {
   const [mode, setMode] = useState("text");
@@ -297,6 +400,7 @@ const FoodModal = ({ onAdd, onClose, color }) => {
         <>
           <textarea value={text} onChange={e => setText(e.target.value)} placeholder="e.g. 2 scrambled eggs, toast with butter, oat milk latte..."
             style={{ ...inp, minHeight: 80, resize: "none", marginBottom: 12 }} />
+          <VoiceInput color={color} onTranscription={(t) => setText(prev => prev ? prev + " " + t : t)} />
           <button onClick={analyse} disabled={loading || !text.trim()} style={{ ...btn, opacity: loading || !text.trim() ? 0.45 : 1 }}>
             {loading ? "Analysing…" : "Analyse Nutrition"}
           </button>

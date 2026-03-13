@@ -127,4 +127,23 @@ I ran a browser subagent and confirmed visually that the layout conforms to the 
 ### Video Recording of UI Interactions
 Check out the video demonstrating the subtle button fill animations and the flat minimalist modal screens:
 ![Interaction Recording](C:\Users\elise\.gemini\antigravity\brain\7e5ef44a-03dc-47e9-af88-c720ce6383d5\chic_redesign_preview_1773353203171.webp)
+
+---
+
+<a name="log-20260312-voice-dictation"></a>
+### Task: Web Speech Dictation (VoiceInput)
+
+**User Request:**
+> I think it would be cool to add a dictation function to the add food area, I have these instructions but do whatever makes sense 
+
+**Artifacts:**
+```markdown
+# Walkthrough: Web Speech Dictation
+
+The Web Speech Dictation feature has been successfully integrated into the food logging model!
+- Dropped the native `VoiceInput.tsx` component into `App.js`.
+- Modified the component to seamlessly blend into the high-end `Inter`/Chic aesthetic. 
+- Stripped all distracting emojis (`🎙️`, `⏹️`, `🗣️`) and replaced them with a flat-style pulsating UI indicator while recording.
+- Hooked the component into the `FoodModal` layout right above the analysis button.
+- Tied the `onTranscription` event to `setText`, meaning anything spoken will instantly append directly into the Gemini ingestion text box!
 ```

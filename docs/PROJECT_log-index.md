@@ -10,6 +10,11 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-12] Web Speech Dictation | [Technical Details](./PROJECT_log-detail.md#log-20260312-voice-dictation)
+- Implemented a native Web Speech API `VoiceInput` component for instant food transcription.
+- Seamlessly styled the component to fit the chic aesthetic (no emojis, flat buttons, pulse animation).
+- Tied dictation outputs directly to the existing Gemini food parser inside the `FoodModal`.
+
 ### [2026-03-12] UI Redesign (Minimalist Chic) | [Technical Details](./PROJECT_log-detail.md#log-20260312-chic-redesign)
 - Scrapped the dark mode glassmorphic UI based on user feedback.
 - Migrated entirely to a crisp, minimal Light Theme (Alabaster background, pure white cards, bare-minimum `#eaeaea` borders).
