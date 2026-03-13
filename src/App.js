@@ -493,7 +493,6 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
   const day = getDay(user, date);
   const goals = getGoals(user);
   const color = user === "ellie" ? "var(--ellie)" : "var(--martin)";
-  const glow = user === "ellie" ? "var(--ellie-glow)" : "var(--martin-glow)";
   const [showFood, setShowFood] = useState(false);
   const [showWorkout, setShowWorkout] = useState(false);
   const [wval, setWval] = useState(day.weight || "");
