@@ -10,6 +10,11 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-14] One-Click Quick Dictate | [Technical Details](./PROJECT_log-detail.md#log-20260314-quick-dictate)
+- Abstracted the `VoiceInput` transcription component to support a minimal dashboard pill variant.
+- Hand-wired a new asynchronous handler to skip the manual modal and stream voice input directly to Gemini.
+- Automatically saves new meal macros straight to Firebase.
+
 ### [2026-03-14] Firebase Cloud Firestore Sync | [Technical Details](./PROJECT_log-detail.md#log-20260314-firebase-sync)
 - Migrated the ephemeral `window._ppData` cache to a fully responsive Google Firebase Cloud backend.
 - Hooked `useStorage` up using `onSnapshot` listeners to instantly broadcast changes across devices.

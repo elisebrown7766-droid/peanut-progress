@@ -166,3 +166,21 @@ Migrated the application's entire database layer from ephemeral `window` state t
 - Leveraged the `onSnapshot` hook so that if Martin logs a meal from his device anywhere in the world, Ellie's phone instantly and automatically updates without reloading the page.
 - Successfully built via CI=true compiler strictness.
 ```
+
+---
+
+<a name="log-20260314-quick-dictate"></a>
+### Task: Quick Dictate Integration
+
+**User Request:**
+> I want to make it so that there is a little microphone option that is maybe just below the add food button. You just press that, you speak, and then whatever you say goes straight to being submitted.
+
+**Artifacts:**
+```markdown
+# Walkthrough: Dashboard Quick Dictate
+
+Removed the friction of opening the `FoodModal` entirely by bringing dictation to the main layer.
+- Refactored `VoiceInput` to cleanly accept a `variant="compact"` prop that matches the main UI logic.
+- Implemented `isQuickDictating` processing state in the main `Dashboard` flow to automatically chain the transcribed string directly into the Gemini `analyzeFood` endpoint.
+- Displays a clean visual pulsing state while Gemini fetches the macros, and then seamlessly appends them to the daily chart.
+```

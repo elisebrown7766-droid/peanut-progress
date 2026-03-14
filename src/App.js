@@ -295,7 +295,7 @@ const Modal = ({ title, color, onClose, children }) => (
 );
 
 // ─── VoiceInput ───────────────────────────────────────────────────────────────
-const VoiceInput = ({ onTranscription, color }) => {
+const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing = false }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [liveText, setLiveText] = useState("");
   const [supported, setSupported] = useState(true);
@@ -368,6 +368,26 @@ const VoiceInput = ({ onTranscription, color }) => {
   }, []);
 
   if (!supported) return null;
+
+  if (variant === "compact") {
+    return (
+      <button type="button" onClick={isRecording ? stopRecording : (!isProcessing ? startRecording : undefined)}
+        disabled={isProcessing}
+        style={{
+          padding: "5px 14px", borderRadius: 99, border: `1px solid ${isProcessing || isRecording ? color : "var(--border)"}`,
+          background: isProcessing || isRecording ? `${color}18` : "var(--surface)",
+          color: isProcessing || isRecording ? color : "var(--text-3)",
+          fontWeight: 600, fontSize: 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 6,
+          transition: "all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1)", opacity: isProcessing ? 0.7 : 1, cursor: isProcessing ? "wait" : "pointer"
+        }}>
+        <div style={{
+          width: 6, height: 6, borderRadius: "50%", background: isProcessing || isRecording ? color : "var(--text-3)",
+          animation: isRecording || isProcessing ? "pulse 1.5s infinite" : "none"
+        }} />
+        {isProcessing ? "Analyzing..." : isRecording ? "Listening..." : "Dictate"}
+      </button>
+    );
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 12 }}>
@@ -531,7 +551,19 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
   const color = user === "ellie" ? "var(--ellie)" : "var(--martin)";
   const [showFood, setShowFood] = useState(false);
   const [showWorkout, setShowWorkout] = useState(false);
+  const [isQuickDictating, setIsQuickDictating] = useState(false);
   const [wval, setWval] = useState(day.weight || "");
+
+  const handleQuickDictate = async (text) => {
+    setIsQuickDictating(true);
+    try {
+      const result = await analyzeFood(text, false);
+      setDay(user, date, { ...day, meals: [...day.meals, result] });
+    } catch (e) {
+      alert("Analysis failed. Try manually adding the food.");
+    }
+    setIsQuickDictating(false);
+  };
 
   const totals = day.meals.reduce((a, m) => ({
     calories: a.calories + m.calories, protein: a.protein + m.protein,
@@ -590,9 +622,12 @@ const Dashboard = ({ user, date, storage, readOnly, compact }) => {
 
       {/* Meals */}
       <div className="glass fu1" style={{ borderRadius: "var(--radius)", padding: 16 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 12 }}>
           {lbl("Meals")}
-          {!readOnly && <button onClick={() => setShowFood(true)} style={{ padding: "5px 14px", borderRadius: 99, border: `1px solid ${color}`, background: `${color}18`, color, fontSize: 12, fontWeight: 700 }}>+ Add</button>}
+          <div style={{ display: "flex", gap: 8 }}>
+            {!readOnly && <VoiceInput onTranscription={handleQuickDictate} color={color} variant="compact" isProcessing={isQuickDictating} />}
+            {!readOnly && <button onClick={() => setShowFood(true)} style={{ padding: "5px 14px", borderRadius: 99, border: `1px solid ${color}`, background: `${color}18`, color, fontSize: 12, fontWeight: 700 }}>+ Add Food</button>}
+          </div>
         </div>
         {day.meals.length === 0
           ? <div style={{ fontSize: 13, color: "var(--text-3)", textAlign: "center", padding: "12px 0" }}>No meals logged yet</div>
