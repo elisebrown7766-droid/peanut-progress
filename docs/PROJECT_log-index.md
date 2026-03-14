@@ -10,6 +10,11 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-14] Chic Custom Cursors | [Technical Details](./PROJECT_log-detail.md#log-20260314-chic-cursors)
+- Injected flat, inline SVGs entirely via global CSS to replace standard OS pointers.
+- The default cursor is now a sleek black circle (`#1a1a1a`).
+- Actions (buttons, toggles, links) now trigger a minimalist four-pointed sparkle (`#d4a398`) to adhere to the playful yet sophisticated design rules.
+
 ### [2026-03-14] One-Click Quick Dictate | [Technical Details](./PROJECT_log-detail.md#log-20260314-quick-dictate)
 - Abstracted the `VoiceInput` transcription component to support a minimal dashboard pill variant.
 - Hand-wired a new asynchronous handler to skip the manual modal and stream voice input directly to Gemini.

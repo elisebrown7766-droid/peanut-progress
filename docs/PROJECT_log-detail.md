@@ -184,3 +184,20 @@ Removed the friction of opening the `FoodModal` entirely by bringing dictation t
 - Implemented `isQuickDictating` processing state in the main `Dashboard` flow to automatically chain the transcribed string directly into the Gemini `analyzeFood` endpoint.
 - Displays a clean visual pulsing state while Gemini fetches the macros, and then seamlessly appends them to the daily chart.
 ```
+
+---
+
+<a name="log-20260314-chic-cursors"></a>
+### Task: Chic Custom Cursors
+
+**User Request:**
+> Can we make it look a little cuter, a little bit more fun, but still keep it looking minimal? Maybe by adding a special cursor.
+
+**Artifacts:**
+```markdown
+# Walkthrough: Custom Global Cursors
+
+Replaced the standard OS cursors using inline data-url SVG embeds encoded directly in `App.js`.
+- **Default:** A minimalist 10px dark charcoal circle.
+- **Pointer (Hover):** A cute, flat 4-point sparkle star using the primary layout `var(--ellie)` tint (`#d4a398`).
+```
