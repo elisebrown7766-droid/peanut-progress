@@ -14,7 +14,6 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="%231a1a1a"/></svg>') 12 12, auto;
 }
 :root {
   --bg: #faf9f8;
@@ -39,8 +38,8 @@ input, textarea, select {
   font-family: 'Inter', sans-serif;
   font-size: 14px;
 }
-button, a, input[type="checkbox"] { 
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 1L14.59 9.41L23 12L14.59 14.59L12 23L9.41 14.59L1 12L9.41 9.41L12 1Z" fill="%23d4a398"/></svg>') 12 12, pointer !important; 
+button { 
+  cursor: pointer; 
   font-family: 'Inter', sans-serif; 
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
