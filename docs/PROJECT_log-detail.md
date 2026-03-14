@@ -147,3 +147,22 @@ The Web Speech Dictation feature has been successfully integrated into the food 
 - Hooked the component into the `FoodModal` layout right above the analysis button.
 - Tied the `onTranscription` event to `setText`, meaning anything spoken will instantly append directly into the Gemini ingestion text box!
 ```
+
+---
+
+<a name="log-20260314-firebase-sync"></a>
+### Task: Firebase Cloud Sync (Real-time Persistence)
+
+**User Request:**
+> Okay, it's up and running, but now I need to be able to actually save any data that's put in. At this point, I enter something and I refresh, and it's gone. Martin enters something, and I can't even see it. All this data needs to be saved; that's the whole point.
+
+**Artifacts:**
+```markdown
+# Walkthrough: Firebase Integration
+
+Migrated the application's entire database layer from ephemeral `window` state to a true serverless backend.
+- Re-architected `useStorage` to initialize a connection to Firebase Cloud Firestore.
+- Established a `sync/v1` data document to hold the unified timeline for Ellie and Martin's metrics.
+- Leveraged the `onSnapshot` hook so that if Martin logs a meal from his device anywhere in the world, Ellie's phone instantly and automatically updates without reloading the page.
+- Successfully built via CI=true compiler strictness.
+```

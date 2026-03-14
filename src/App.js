@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { initializeApp } from "firebase/app";
+import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore";
 
 const FONT_LINK = `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');`;
 
@@ -106,12 +108,46 @@ const fmtDate = d => new Date(d + "T12:00:00").toLocaleDateString("en-GB", { wee
 const addDays = (d, n) => { const dt = new Date(d + "T12:00:00"); dt.setDate(dt.getDate() + n); return dt.toISOString().split("T")[0]; };
 const EMPTY_DAY = () => ({ meals: [], water: 0, workouts: [], weight: null });
 
+const firebaseConfig = {
+  apiKey: "AIzaSyAabofKnw7IygBDqvX3kAp0_KRZj7ohfW0",
+  authDomain: "peanut-progress-e88fa.firebaseapp.com",
+  projectId: "peanut-progress-e88fa",
+  storageBucket: "peanut-progress-e88fa.firebasestorage.app",
+  messagingSenderId: "730032937757",
+  appId: "1:730032937757:web:01bf7a05fffb26c1cd9ff4",
+  measurementId: "G-VTMGH4E6Q9"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const useStorage = () => {
   const [data, setData] = useState(() => window._ppData || { ellie: {}, martin: {}, goals: DEFAULT_GOALS });
-  const save = next => { window._ppData = next; setData(next); };
-  const getDay = (user, date) => data[user][date] || EMPTY_DAY();
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "sync", "v1"), (d) => {
+      if (d.exists()) {
+        const cloudData = d.data();
+        window._ppData = cloudData;
+        setData(cloudData);
+      } else {
+        const initData = { ellie: {}, martin: {}, goals: DEFAULT_GOALS };
+        setDoc(doc(db, "sync", "v1"), initData);
+        window._ppData = initData;
+        setData(initData);
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  const save = next => { 
+    window._ppData = next; 
+    setData(next); 
+    setDoc(doc(db, "sync", "v1"), next).catch(e => console.error("Firebase Sync Error:", e));
+  };
+  
+  const getDay = (user, date) => data[user]?.[date] || EMPTY_DAY();
   const setDay = (user, date, day) => save({ ...data, [user]: { ...data[user], [date]: day } });
-  const getGoals = user => data.goals[user];
+  const getGoals = user => data.goals?.[user] || DEFAULT_GOALS[user];
   const setGoals = (user, goals) => save({ ...data, goals: { ...data.goals, [user]: goals } });
   return { data, getDay, setDay, getGoals, setGoals };
 };
