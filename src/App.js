@@ -767,7 +767,16 @@ export default function App() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
               <button onClick={() => setDate(addDays(date,-1))} style={{ width: 32, height: 32, borderRadius: 99, border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text-2)", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center" }}>‹</button>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text)" }}>Peanut Progress</div>
+                <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--text)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  Peanut Progress
+                  <svg width="22" height="22" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 6, marginTop: -2, opacity: 0.9 }}>
+                    <g transform="rotate(-15 14 14)">
+                      <path d="M8 8 C 2 8, 2 20, 8 20 C 11.5 20, 12.5 16, 14 16 C 15.5 16, 16.5 20, 20 20 C 26 20, 26 8, 20 8 C 16.5 8, 15.5 12, 14 12 C 12.5 12, 11.5 8, 8 8 Z" />
+                      <path d="M7 12 C 7 14, 8 15, 9 15" />
+                      <path d="M19 13 C 20 13, 21 14, 21 16" />
+                    </g>
+                  </svg>
+                </div>
                 <div style={{ fontSize: 11, color: "var(--text-3)", marginTop: 2, fontWeight: 500 }}>
                   {isToday ? "Today" : fmtDate(date)}
                   {!isToday && <span style={{ marginLeft: 6, background: "var(--bg3)", color: "var(--text-2)", fontSize: 10, padding: "2px 8px", borderRadius: 99 }}>view only</span>}

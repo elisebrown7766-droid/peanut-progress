@@ -10,6 +10,11 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-14] Minimalist Organic Logo | [Technical Details](./PROJECT_log-detail.md#log-20260314-organic-logo)
+- Generated a custom hand-drawn conceptual mockup of a peanut to match the chic aesthetic.
+- Mathematically coded the sketch into a clean, scalable SVG format.
+- Bound the SVG directly beside the main application 'Peanut Progress' text.
+
 ### [2026-03-14] Chic Custom Cursors | [Technical Details](./PROJECT_log-detail.md#log-20260314-chic-cursors)
 - Injected flat, inline SVGs entirely via global CSS to replace standard OS pointers.
 - The default cursor is now a sleek black circle (`#1a1a1a`).

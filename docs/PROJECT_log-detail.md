@@ -187,6 +187,24 @@ Removed the friction of opening the `FoodModal` entirely by bringing dictation t
 
 ---
 
+<a name="log-20260314-organic-logo"></a>
+### Task: Minimalist Organic Logo
+
+**User Request:**
+> Can you add a little minimalist style peanut drawing next to the title, Peanut Progress? I want it to look like a very organic sketch. Show me before you do anything. 
+
+**Artifacts:**
+```markdown
+# Walkthrough: Minimalist Organic Sketch Logo
+
+Designed an unobtrusive, handcrafted logomark to sit snugly next to the title.
+- Rendered a conceptual mockup using the AI image generator to lock in the "chic organic" aesthetic request.
+- Hand-coded a continuous-line SVG trace (`<path d="..." />`) to perfectly match the hand-drawn, asymmetrical dimpled sketch look.
+- Injected it inline into the primary `App.js` header to keep the repository asset-free and lightning fast. 
+```
+
+---
+
 <a name="log-20260314-chic-cursors"></a>
 ### Task: Chic Custom Cursors
 
