@@ -103,9 +103,23 @@ const DEFAULT_GOALS = {
   martin: { calories: 2400, protein: 160, fat: 80, carbs: 280, fiber: 30, sugar: 50, water: 10 },
 };
 const EXERCISES = ["Running","Walking","Cycling","Swimming","Weight Training","HIIT","Yoga","Pilates","Boxing","Rock Climbing","Other"];
-const todayKey = () => new Date().toISOString().split("T")[0];
-const fmtDate = d => new Date(d + "T12:00:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" });
-const addDays = (d, n) => { const dt = new Date(d + "T12:00:00"); dt.setDate(dt.getDate() + n); return dt.toISOString().split("T")[0]; };
+const todayKey = () => {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().split("T")[0];
+};
+const fmtDate = d => {
+  const dt = new Date(d);
+  dt.setMinutes(dt.getMinutes() + dt.getTimezoneOffset());
+  return dt.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" });
+};
+const addDays = (d, n) => { 
+  const dt = new Date(d);
+  dt.setMinutes(dt.getMinutes() + dt.getTimezoneOffset());
+  dt.setDate(dt.getDate() + n); 
+  dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+  return dt.toISOString().split("T")[0]; 
+};
 const EMPTY_DAY = () => ({ meals: [], water: 0, workouts: [], weight: null });
 
 const firebaseConfig = {

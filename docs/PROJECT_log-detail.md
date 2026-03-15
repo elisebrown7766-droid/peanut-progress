@@ -205,6 +205,24 @@ Designed an unobtrusive, handcrafted logomark to sit snugly next to the title.
 
 ---
 
+<a name="log-20260314-timezone-hotfix"></a>
+### Task: Timezone Desync Hotfix
+
+**User Request:**
+> I've just checked in the food items that I added on my laptop. They stay when I refresh it, but when I check on my phone, it doesn't show any food items added.
+
+**Artifacts:**
+```markdown
+# Walkthrough: Timezone Desync Hotfix
+
+Diagnosed why the user's mobile device was rendering an empty dashboard despite the laptop visibly storing Firebase documents.
+- Discovered that because the time was past 9 PM UTC-3, `new Date().toISOString()` automatically resolved to the next day (`2026-03-15`) in UTC, causing the phone to request the wrong Firestore document bucket.
+- Patched all date string utility functions (`todayKey`, `fmtDate`, `addDays`) in `App.js` to mathematically integrate the local `getTimezoneOffset()` prior to stringification.
+- Devices now reliably match perfectly.
+```
+
+---
+
 <a name="log-20260314-chic-cursors"></a>
 ### Task: Chic Custom Cursors
 

@@ -10,6 +10,11 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-14] Timezone Desync Hotfix | [Technical Details](./PROJECT_log-detail.md#log-20260314-timezone-hotfix)
+- Discovered a critical UTC rollover discrepancy where mobile devices in late timezones evaluated `todayKey()` as "tomorrow".
+- Patched `App.js` date utilities to manually subtract `getTimezoneOffset()` before running `toISOString()`.
+- Guaranteed that Ellie and Martin's devices always fetch identical document chunks from Cloud Firestore regardless of location.
+
 ### [2026-03-14] Minimalist Organic Logo | [Technical Details](./PROJECT_log-detail.md#log-20260314-organic-logo)
 - Generated a custom hand-drawn conceptual mockup of a peanut to match the chic aesthetic.
 - Mathematically coded the sketch into a clean, scalable SVG format.
