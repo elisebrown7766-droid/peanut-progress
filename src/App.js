@@ -95,6 +95,7 @@ button:active {
 }
 @media (max-width: 899px) {
   .desktop-col-label { display: none !important; }
+  .mobile-hide { display: none !important; }
 }
 `;
 
@@ -316,6 +317,7 @@ const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing 
   
   const recognitionRef = useRef(null);
   const finalTextRef = useRef("");
+  const interimTextRef = useRef("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -352,22 +354,27 @@ const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing 
           interim += t;
         }
       }
+      interimTextRef.current = interim;
       setLiveText(interim || finalTextRef.current);
     };
 
     recognition.onend = () => {
       setIsRecording(false);
-      const transcript = finalTextRef.current || liveText;
+      const transcript = finalTextRef.current || interimTextRef.current;
       if (transcript.trim()) {
         onTranscription(transcript.trim());
       }
       setLiveText("");
+      interimTextRef.current = "";
     };
 
     recognition.onerror = (event) => {
       setIsRecording(false);
       if (event.error !== "no-speech") {
         console.error("Voice error:", event.error);
+        if (event.error === "not-allowed") {
+           alert("Please allow microphone access in your phone's browser settings to use Dictation.");
+        }
       }
     };
 
@@ -830,32 +837,28 @@ export default function App() {
         {tab === "today" ? (
           <div className="desktop-cols" style={{ padding: 14 }}>
             {/* Ellie column */}
-            <div>
+            <div className={user === "martin" ? "mobile-hide" : ""}>
               <div className="desktop-col-label" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-2)", marginBottom: 12, letterSpacing: "0.05em", textTransform: "uppercase" }}>Ellie</div>
               <Dashboard user="ellie" date={date} storage={storage} readOnly={!isToday} />
             </div>
             {/* Martin column */}
-            <div>
+            <div className={user === "ellie" ? "mobile-hide" : ""}>
               <div className="desktop-col-label" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-2)", marginBottom: 12, letterSpacing: "0.05em", textTransform: "uppercase" }}>Martin</div>
               <Dashboard user="martin" date={date} storage={storage} readOnly={!isToday} />
             </div>
           </div>
         ) : (
           <div className="desktop-week" style={{ padding: 14 }}>
-            {/* Mobile: show active user. Desktop: show both side by side */}
+            {/* Mobile: hide inactive user. Desktop: show both side by side */}
             <div className="desktop-cols" style={{ padding: 0 }}>
-              <div>
+              <div className={user === "martin" ? "mobile-hide" : ""}>
                 <div className="desktop-col-label" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-2)", marginBottom: 12, letterSpacing: "0.05em", textTransform: "uppercase" }}>Ellie</div>
                 <WeeklyView user="ellie" storage={storage} />
               </div>
-              <div>
+              <div className={user === "ellie" ? "mobile-hide" : ""}>
                 <div className="desktop-col-label" style={{ fontSize: 12, fontWeight: 700, color: "var(--text-2)", marginBottom: 12, letterSpacing: "0.05em", textTransform: "uppercase" }}>Martin</div>
                 <WeeklyView user="martin" storage={storage} />
               </div>
-            </div>
-            {/* Mobile fallback */}
-            <div className="mobile-user-switcher" style={{ display: "block" }}>
-              <WeeklyView user={user} storage={storage} />
             </div>
           </div>
         )}

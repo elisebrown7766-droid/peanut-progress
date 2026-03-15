@@ -10,6 +10,10 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-14] Mobile UX/UI Hotfixes | [Technical Details](./PROJECT_log-detail.md#log-20260314-mobile-hotfixes)
+- Resolved an iOS Safari React closure bug preventing the dictation API from cleanly passing the transcribed voice string inside `VoiceInput`.
+- Appended a `.mobile-hide` layout strategy to the master `App` component to dynamically render only the active user's dashboard cleanly for small viewport devices.
+
 ### [2026-03-14] Timezone Desync Hotfix | [Technical Details](./PROJECT_log-detail.md#log-20260314-timezone-hotfix)
 - Discovered a critical UTC rollover discrepancy where mobile devices in late timezones evaluated `todayKey()` as "tomorrow".
 - Patched `App.js` date utilities to manually subtract `getTimezoneOffset()` before running `toISOString()`.

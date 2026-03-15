@@ -223,6 +223,29 @@ Diagnosed why the user's mobile device was rendering an empty dashboard despite 
 
 ---
 
+<a name="log-20260314-mobile-hotfixes"></a>
+### Task: Mobile UX/UI Hotfixes
+
+**User Request:**
+> And the dictate function has stopped working on my phone. Also, I want to make it so that on a phone you can actually select either Ellie or Martin.
+
+**Artifacts:**
+```markdown
+# Walkthrough: Mobile Device Parity Hotfixes
+
+## Stale React Closures in Safari Dictation
+Fixed a silent failure where iOS Safari was prematurely wiping `liveText` from state during `webkitSpeechRecognition` `onend` cycles.
+- Transitioned the interim data bucket to a highly stable mutable `useRef` boundary.
+- Hooked up aggressive `not-allowed` modal alerts to guide the user into phone settings if the browser suppresses microphone access.
+
+## Viewport Filtering
+The `App` was failing to swap views based on the React `user` state.
+- Developed an explicit CSS media query `< 899px` containing `.mobile-hide`.
+- Wired the classes directly to the `user` identity conditional statements on both columns.
+```
+
+---
+
 <a name="log-20260314-chic-cursors"></a>
 ### Task: Chic Custom Cursors
 
