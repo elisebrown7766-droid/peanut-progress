@@ -246,6 +246,24 @@ The `App` was failing to swap views based on the React `user` state.
 
 ---
 
+<a name="log-20260314-vercel-ci"></a>
+### Task: Vercel CI Hotfix
+
+**User Request:**
+> Error: Command "npm run build" exited with 1: React Hook useCallback has an unnecessary dependency: 'liveText'.
+
+**Artifacts:**
+```markdown
+# Walkthrough: Restoring Vercel CI Build
+
+Because Vercel mandates `CI=true`, minor linter warnings cause full build failures.
+- When resolving the Safari Dictation closure bug, the `liveText` state variable was entirely removed from `useCallback`, but its name remained mapped in the static dependency array list.
+- Erased `liveText` from `[liveText, onTranscription]` to clear the warning.
+- Validated via `$env:CI="true"; npm run build` locally to guarantee a clean pipeline push.
+```
+
+---
+
 <a name="log-20260314-chic-cursors"></a>
 ### Task: Chic Custom Cursors
 

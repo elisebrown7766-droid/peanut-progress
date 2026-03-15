@@ -380,7 +380,7 @@ const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing 
 
     recognitionRef.current = recognition;
     recognition.start();
-  }, [liveText, onTranscription]);
+  }, [onTranscription]);
 
   const stopRecording = useCallback(() => {
     if (recognitionRef.current) {

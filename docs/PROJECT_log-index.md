@@ -10,6 +10,10 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-14] Vercel CI Hotfix | [Technical Details](./PROJECT_log-detail.md#log-20260314-vercel-ci)
+- Resolved an `exhaustive-deps` ESLint violation blocking Vercel deployments.
+- Stripped an unused `liveText` dependency array variable left over from the Safari refactor to immediately restore a green build pipeline.
+
 ### [2026-03-14] Mobile UX/UI Hotfixes | [Technical Details](./PROJECT_log-detail.md#log-20260314-mobile-hotfixes)
 - Resolved an iOS Safari React closure bug preventing the dictation API from cleanly passing the transcribed voice string inside `VoiceInput`.
 - Appended a `.mobile-hide` layout strategy to the master `App` component to dynamically render only the active user's dashboard cleanly for small viewport devices.
