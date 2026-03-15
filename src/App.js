@@ -362,6 +362,8 @@ const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing 
       const transcript = finalTextRef.current || interimTextRef.current;
       if (transcript.trim()) {
         onTranscription(transcript.trim());
+      } else {
+        alert("Mobile Dictation Error: Safari stopped recording but did not capture any speech. Please try tapping, waiting 1 second, and speaking clearly.");
       }
       setLiveText("");
       interimTextRef.current = "";
@@ -369,11 +371,12 @@ const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing 
 
     recognition.onerror = (event) => {
       setIsRecording(false);
-      if (event.error !== "no-speech") {
-        console.error("Voice error:", event.error);
-        if (event.error === "not-allowed") {
-           alert("Please allow microphone access in your phone's browser settings to use Dictation.");
-        }
+      if (event.error === "not-allowed") {
+         alert("Please allow microphone access in your phone's browser settings (Settings > Safari > Microphone) to use Dictation.");
+      } else if (event.error === "no-speech") {
+         // silently ignore no-speech as it triggers onend empty transcript anyway
+      } else {
+         alert("Apple Speech API Error: " + event.error + ". This usually means network failure or Safari restriction.");
       }
     };
 
