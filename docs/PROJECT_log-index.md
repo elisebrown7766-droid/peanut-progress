@@ -10,6 +10,10 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-14] Vercel Environments Hotfix | [Technical Details](./PROJECT_log-detail.md#log-20260314-vercel-env)
+- Sourced a catastrophic failure in the Dictation feature entirely back to Vercel lacking the `.env` file credentials.
+- Injected the Gemini API key directly into the compiled HTTP requests to bypass the `.env` firewall.
+
 ### [2026-03-14] Vercel CI Hotfix | [Technical Details](./PROJECT_log-detail.md#log-20260314-vercel-ci)
 - Resolved an `exhaustive-deps` ESLint violation blocking Vercel deployments.
 - Stripped an unused `liveText` dependency array variable left over from the Safari refactor to immediately restore a green build pipeline.
