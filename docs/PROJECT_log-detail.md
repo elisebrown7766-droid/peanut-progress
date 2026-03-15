@@ -282,6 +282,27 @@ Diagnosed why `VoiceInput` and dictation were failing on the live URL but passin
 
 ---
 
+<a name="log-20260314-ios-fallback"></a>
+### Task: iOS Native Dictate Fallback
+
+**User Request:**
+> It's still not working. It says Apple Speech API error: service not allowed.
+
+**Artifacts:**
+```markdown
+# Walkthrough: Apple OS Native Dictator Fallback
+
+Because the user's specific iPhone aggressively intercepted the Web Speech requests with `service-not-allowed`, relying on `webkitSpeechRecognition` was fundamentally impossible without lowering mobile privacy fences.
+
+We pivoted the UX approach entirely:
+- **Instant Fallback**: If `VoiceInput.js` detects *any* API failure (`event.error`), it immediately swallows the failure and triggers `fallbackMode`.
+- **Keyboard Handoff**: The failed microphone button dynamically morphs into a native `<input type="text">` or `<textarea>` element with `autoFocus`. 
+- **User Flow**: The auto-focus summons the native Apple software keyboard, allowing the user to tap the OS's bulletproof microphone button to dictate without Safari getting involved in the Web API layer.
+- Once submitted, the fallback hides itself seamlessly.
+```
+
+---
+
 <a name="log-20260314-chic-cursors"></a>
 ### Task: Chic Custom Cursors
 

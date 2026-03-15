@@ -10,6 +10,10 @@ Peanut Progress is a personalized fitness and nutrition tracking dashboard for E
 
 ## History
 
+### [2026-03-14] iOS Native Dictate Fallback | [Technical Details](./PROJECT_log-detail.md#log-20260314-ios-fallback)
+- Determined that Apple Safari actively intercepts and blocks the Web Speech API on certain devices with `service-not-allowed`.
+- Stripped error alerts and engineered a dynamic `fallbackMode` that transforms the broken microphone button into a native OS input field to utilize the phone keyboard engine instead.
+
 ### [2026-03-14] Vercel Environments Hotfix | [Technical Details](./PROJECT_log-detail.md#log-20260314-vercel-env)
 - Sourced a catastrophic failure in the Dictation feature entirely back to Vercel lacking the `.env` file credentials.
 - Injected the Gemini API key directly into the compiled HTTP requests to bypass the `.env` firewall.

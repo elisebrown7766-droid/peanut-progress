@@ -313,6 +313,8 @@ const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing 
   const [isRecording, setIsRecording] = useState(false);
   const [liveText, setLiveText] = useState("");
   const [supported, setSupported] = useState(true);
+  const [fallbackMode, setFallbackMode] = useState(false);
+  const [fallbackText, setFallbackText] = useState("");
   
   const recognitionRef = useRef(null);
   const finalTextRef = useRef("");
@@ -371,12 +373,10 @@ const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing 
 
     recognition.onerror = (event) => {
       setIsRecording(false);
-      if (event.error === "not-allowed") {
-         alert("Please allow microphone access in your phone's browser settings (Settings > Safari > Microphone) to use Dictation.");
-      } else if (event.error === "no-speech") {
-         // silently ignore no-speech as it triggers onend empty transcript anyway
-      } else {
-         alert("Apple Speech API Error: " + event.error + ". This usually means network failure or Safari restriction.");
+      // If Safari blocks the mic or the web API fails, instantly morph into the native OS keyboard fallback
+      if (event.error !== "no-speech") {
+         console.warn("Speech API failed (" + event.error + "), switching to native fallback mode.");
+         setFallbackMode(true);
       }
     };
 
@@ -390,7 +390,23 @@ const VoiceInput = ({ onTranscription, color, variant = "default", isProcessing 
     }
   }, []);
 
-  if (!supported) return null;
+  if (!supported || fallbackMode) {
+    if (variant === "compact") {
+      return (
+        <form onSubmit={(e) => { e.preventDefault(); if (fallbackText.trim() && !isProcessing) { onTranscription(fallbackText.trim()); setFallbackText(""); setFallbackMode(false); } }} style={{ display: "flex", gap: 6, flex: 1, height: 36 }}>
+          <input autoFocus type="text" value={fallbackText} onChange={e => setFallbackText(e.target.value)} disabled={isProcessing} placeholder={isProcessing ? "Analyzing..." : "Tap your keyboard mic..."} style={{ flex: 1, padding: "0 14px", borderRadius: 99, border: `1px solid var(--border)`, background: "var(--surface)", fontSize: 13, color: "var(--text)", outline: "none", opacity: isProcessing ? 0.6 : 1, transition: "opacity 0.2s" }} />
+          <button type="submit" disabled={isProcessing} style={{ height: "100%", padding: "0 16px", borderRadius: 99, border: "none", background: color, color: "#fff", fontSize: 13, fontWeight: 700, cursor: isProcessing ? "wait" : "pointer", opacity: isProcessing ? 0.6 : 1 }}>Go</button>
+        </form>
+      );
+    }
+    return (
+       <div style={{ padding: 16, background: "var(--bg3)", borderRadius: 16 }}>
+         <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>Native Dictation Mode</div>
+         <textarea autoFocus value={fallbackText} onChange={e => setFallbackText(e.target.value)} disabled={isProcessing} placeholder="Tap your keyboard's microphone button here to dictate..." style={{ width: "100%", height: 100, padding: 12, borderRadius: 12, border: "1px solid var(--border)", background: "var(--surface)", fontSize: 14, color: "var(--text)", resize: "none", outline: "none", marginBottom: 12 }} />
+         <button onClick={() => { if (fallbackText.trim() && !isProcessing) { onTranscription(fallbackText.trim()); setFallbackText(""); setFallbackMode(false); } }} disabled={isProcessing} style={{ width: "100%", padding: 14, borderRadius: 12, background: color, color: "#fff", fontWeight: 700, border: "none" }}>{isProcessing ? "Processing..." : "Analyze Food"}</button>
+       </div>
+    );
+  }
 
   if (variant === "compact") {
     return (
